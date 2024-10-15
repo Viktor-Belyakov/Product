@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/product')]
 class ProductController extends AbstractController
 {
     public function __construct(
@@ -25,17 +26,13 @@ class ProductController extends AbstractController
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    #[Route('/product/search-by-description/', name: 'product_search_by_description')]
+    #[Route('/search-by-description', name: 'product_search_by_description')]
     public function searchByDescription(Request $request): JsonResponse
     {
         $params = $this->getQueryParams($request, 'description');
         $result = $this->elasticService->findByDescription($params['description'], $params['additionalParams']);
 
-        if ($result) {
-            return new JsonResponse($result, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse([]);
+        return $this->createJsonResponse($result);
     }
 
     /**
@@ -44,17 +41,13 @@ class ProductController extends AbstractController
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    #[Route('/product/search-by-name/', name: 'product_search_by_name')]
+    #[Route('/search-by-name', name: 'product_search_by_name')]
     public function searchByName(Request $request): JsonResponse
     {
         $params = $this->getQueryParams($request, 'name');
         $result = $this->elasticService->findByName($params['name'], $params['additionalParams']);
 
-        if ($result) {
-            return new JsonResponse($result, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse([]);
+        return $this->createJsonResponse($result);
     }
 
     private function getQueryParams(Request $request, string $key): array
@@ -63,5 +56,18 @@ class ProductController extends AbstractController
             $key => $request->query->get($key),
             'additionalParams' => $request->query->get('additionalParams')
         ];
+    }
+
+    /**
+     * @param $result
+     * @return JsonResponse
+     */
+    private function createJsonResponse($result): JsonResponse
+    {
+        if ($result) {
+            return new JsonResponse($result, Response::HTTP_OK, [], true);
+        }
+
+        return new JsonResponse([]);
     }
 }
