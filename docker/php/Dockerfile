@@ -40,6 +40,8 @@ RUN composer require elasticsearch/elasticsearch
 # Установка прав
 RUN chown -R www-data:www-data /var/www/app
 
+COPY docker/php/etc/php.ini /usr/local/etc/php/conf.d/php.ini
+
 # Экспонирование порта
 EXPOSE 9000
 

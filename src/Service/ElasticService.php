@@ -136,8 +136,6 @@ class ElasticService
      */
     private function parseSearchResults(Elasticsearch $response): array
     {
-        ini_set('memory_limit', '1024M');
-
         $results = [];
         $productsSource = array_column($response['hits']['hits'], '_source');
 
