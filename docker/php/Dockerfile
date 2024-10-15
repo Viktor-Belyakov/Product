@@ -26,7 +26,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Установка рабочего каталога и копирование приложения
 WORKDIR /var/www/app
-COPY . /var/www/app
+COPY ../.. /var/www/app
 
 # Установка прав
 RUN chown -R www-data:www-data /var/www/app
@@ -36,10 +36,6 @@ RUN composer install
 
 # Установка Elasticsearch
 RUN composer require elasticsearch/elasticsearch
-
-
-###################### DEBUG #######################
-##################### END OF DEBUG #######################
 
 # Установка прав
 RUN chown -R www-data:www-data /var/www/app

@@ -2,15 +2,17 @@
 
 namespace App\Command;
 
-use App\Message\ProductMessage;
-use App\Message\ProductMessageDispatcher;
+use App\Controller\ProductMessageController;
 use App\Service\ProductParserService;
+use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsCommand(
     name: 'app:import-products',
@@ -23,7 +25,7 @@ class ImportProductsCommand extends Command
     protected static $defaultName = 'app:import:products';
 
     public function __construct(
-        private readonly ProductMessageDispatcher $messageBus,
+        private readonly MessageBusInterface $messageBus,
     )
     {
         parent::__construct();
@@ -52,14 +54,12 @@ class ImportProductsCommand extends Command
 
         try {
             $parsedProducts = ProductParserService::parseProducts($filePath);
+            $request = Request::createFromGlobals();
+            $request->request->set('parsedProducts', $parsedProducts);
 
-            foreach ($parsedProducts as $productData) {
-                $productData = explode('|', $productData);
-                $message = new ProductMessage($productData);
-                $this->messageBus->sendMessage($message);
-            }
-        } catch (\RuntimeException $e) {
-            $output->writeln('<error>' . $e->getMessage() . '</error>');
+            (new ProductMessageController())->sendParsedProducts($request, $this->messageBus);
+        }  catch (Exception $e) {
+            $output->writeln('<error>Произошла ошибка: ' . $e->getMessage() . '</error>');
             return Command::FAILURE;
         }
 

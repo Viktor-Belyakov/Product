@@ -85,6 +85,19 @@ class ElasticService
         return $this->find($params);
     }
 
+    /**
+     * @param string $name
+     * @param array|null $additionalParams
+     * @return bool|string
+     * @throws ClientResponseException
+     * @throws ServerResponseException
+     */
+    public function findByName(string $name, ?array $additionalParams): bool|string
+    {
+        $params = $this->getParams($this->indexName, 'name', $name, $additionalParams);
+        return $this->find($params);
+    }
+
     /*********************************** PRIVATE METHOD **********************/
     /**
      * @param $params
