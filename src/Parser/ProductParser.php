@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Service;
+namespace App\Parser;
 
-readonly class ProductParserService
+readonly class ProductParser
 {
     /**
      * @param string $filePath
      * @return array
      */
-    public static function parseProducts(string $filePath): array
+    public static function parse(string $filePath): array
     {
         $products = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $parsedProducts = [];

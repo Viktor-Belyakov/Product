@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Controller\ProductMessageController;
-use App\Service\ProductParserService;
+use App\Parser\ProductParser;
 use Exception;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -53,7 +53,7 @@ class ImportProductsCommand extends Command
         }
 
         try {
-            $parsedProducts = ProductParserService::parseProducts($filePath);
+            $parsedProducts = ProductParser::parse($filePath);
             $request = Request::createFromGlobals();
             $request->request->set('parsedProducts', $parsedProducts);
 
