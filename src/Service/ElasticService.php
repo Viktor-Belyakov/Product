@@ -136,10 +136,13 @@ class ElasticService
      */
     private function parseSearchResults(Elasticsearch $response): array
     {
+        ini_set('memory_limit', '1024M');
+
         $results = [];
-        foreach ($response['hits']['hits'] as $hit) {
-            $productSource = $hit['_source'];
-            $sku = $productSource['product_sku'];
+        $productsSource = array_column($response['hits']['hits'], '_source');
+
+        foreach ($productsSource as $product) {
+            $sku = $product['product_sku'];
             $results = array_merge($results, $this->productRepository->getProductBySkuAsArray($sku));
         }
 
