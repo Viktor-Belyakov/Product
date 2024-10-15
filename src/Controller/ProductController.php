@@ -59,10 +59,10 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @param $result
+     * @param string $result
      * @return JsonResponse
      */
-    private function createJsonResponse($result): JsonResponse
+    private function createJsonResponse(string $result): JsonResponse
     {
         if ($result) {
             return new JsonResponse($result, Response::HTTP_OK, [], true);
