@@ -26,13 +26,16 @@ class ProductController extends AbstractController
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    #[Route('/search-by-description', name: 'product_search_by_description')]
+    #[Route('/search-by-description', name: 'product_search_by_description', methods: ['GET'])]
     public function searchByDescription(Request $request): JsonResponse
     {
-        $params = $this->getQueryParams($request, 'description');
-        $result = $this->elasticService->findByDescription($params['description'], $params['additionalParams']);
+        $description = $request->query->get('description');
+        $additionalParams = $request->query->get('additionalParams');
+        $result = $this->elasticService->findByDescription($description, $additionalParams);
 
-        return $this->createJsonResponse($result);
+        return $result
+            ? $this->json($result)
+            : $this->json([]);
     }
 
     /**
@@ -41,33 +44,15 @@ class ProductController extends AbstractController
      * @throws ClientResponseException
      * @throws ServerResponseException
      */
-    #[Route('/search-by-name', name: 'product_search_by_name')]
+    #[Route('/search-by-name', name: 'product_search_by_name', methods: ['GET'])]
     public function searchByName(Request $request): JsonResponse
     {
-        $params = $this->getQueryParams($request, 'name');
-        $result = $this->elasticService->findByName($params['name'], $params['additionalParams']);
+        $name = $request->query->get('name');
+        $additionalParams = $request->query->get('additionalParams');
+        $result = $this->elasticService->findByName($name, $additionalParams);
 
-        return $this->createJsonResponse($result);
-    }
-
-    private function getQueryParams(Request $request, string $key): array
-    {
-        return [
-            $key => $request->query->get($key),
-            'additionalParams' => $request->query->get('additionalParams')
-        ];
-    }
-
-    /**
-     * @param string $result
-     * @return JsonResponse
-     */
-    private function createJsonResponse(string $result): JsonResponse
-    {
-        if ($result) {
-            return new JsonResponse($result, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse([]);
+        return $result
+            ? $this->json($result)
+            : $this->json([]);
     }
 }

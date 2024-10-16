@@ -13,13 +13,13 @@ namespace App\Dto;
  */
 class ProductDTO
 {
-    public ?int $productSku;
-    public ?string $name;
-    public ?float $price;
-    public ?string $detailText;
-    public ?string $level1;
-    public ?string $level2;
-    public ?string $level3;
+    public readonly ?int $productSku;
+    public readonly ?string $name;
+    public readonly ?float $price;
+    public readonly ?string $detailText;
+    public readonly ?string $level1;
+    public readonly ?string $level2;
+    public readonly ?string $level3;
 
     public function __construct(
         ?int $productSku,
